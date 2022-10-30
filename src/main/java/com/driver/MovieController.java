@@ -25,6 +25,8 @@ public class MovieController {
     HashMap<String,String> direct_movies_map = new HashMap<>();
     HashMap<String,Director> Director_map = new HashMap<>();
 
+    HashMap<String,List<String>> movieList = new HashMap<>();
+
 
     @PostMapping("/add-movie")
     public String addMovie(@RequestBody Movie movie){
@@ -49,15 +51,16 @@ public class MovieController {
     public String addMovieDirectorPair(@PathVariable String director_name,@PathVariable String movie_name)
     {
 
-//          if(direct_movies_map.containsKey(director_name))
-//          {
-//              direct_movies_map.get(director_name).add(movie_name);
-//          }
-//          else {
-//              List<String> movie_list = new ArrayList<>();
-//              movie_list.add(movie_name);
-//              direct_movies_map.put(director_name,movie_list);
-//          }
+          if(movieList.containsKey(director_name))
+          {
+              movieList.get(director_name).add(movie_name);
+          }
+          else {
+              List<String> movie_list = new ArrayList<>();
+              movie_list.add(movie_name);
+              movieList.put(director_name,movie_list);
+          }
+
         direct_movies_map.put(director_name,movie_name);
         return  "success";
     }
@@ -96,14 +99,14 @@ public class MovieController {
 
     //Get List of movies name for a given director name
     @GetMapping("/get-movies-by-director-name/{director}")
-    public ResponseEntity<String> getMoviesByDirectorName(@PathVariable String name)
+    public ResponseEntity<List<String>> getMoviesByDirectorName(@PathVariable String name)
     {
-       if(direct_movies_map.containsKey(name))
+       if(movieList.containsKey(name))
        {
-           return  new ResponseEntity<>(direct_movies_map.get(name), HttpStatus.CREATED);
+           return new ResponseEntity<>(movieList.get(name), HttpStatus.CREATED);
 
        }
-        return  new ResponseEntity<>(direct_movies_map.get(name), HttpStatus.CREATED);
+        return  new ResponseEntity<>(movieList.get(name), HttpStatus.CREATED);
     }
     //http.//localhost:8030/movies/get-movies-by-director-name/{director}
 
