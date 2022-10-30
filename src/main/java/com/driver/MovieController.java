@@ -9,51 +9,56 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping("movies")
 public class MovieController {
 
 
-    //this list record the movie list
-    private List<Movie> moviesList = new ArrayList<>();
 
-    //this list record the Director  list
-    private List<Director> DirectorList = new ArrayList<>();
 
     //list of director and movie nam
 
-    private List<Pair> pairsList = new ArrayList<>();
+
 
     //this hashmap map the movie name and Movie object
     HashMap<String,Movie> Movie_map = new HashMap<>();
     //this @PathVariable int x map the director name and Director object
+    HashMap<String,List<String>> direct_movies_map = new HashMap<>();
     HashMap<String,Director> Director_map = new HashMap<>();
 
 
     @PostMapping("/add-movie")
-    public ResponseEntity<Movie> addMovie(@RequestBody Movie movie){
-        moviesList.add(movie);
+    public String addMovie(@RequestBody Movie movie){
+//        moviesList.add(movie);
         Movie_map.put(movie.getName(),movie);
-        return  new ResponseEntity<>(movie, HttpStatus.CREATED);
+        return "success";
     }
     //http://localhost:8030/movies/add-movie
 
     @PostMapping("/add-director")
-    public ResponseEntity<Director> addDirector(@RequestBody Director director)
+    public String addDirector(@RequestBody Director director)
     {
-        DirectorList.add(director);
+
         Director_map.put(director.getName(),director);
-        return  new ResponseEntity<>(director, HttpStatus.CREATED);
+        return "success";
     }
   //http://localhost:8030/movies/add-director
 
 
     //Pair an existing movie and director
     @PutMapping("/add-movie-director-pair/{director_name}/{movie_name}")
-    public ResponseEntity<Pair> addMovieDirectorPair(@PathVariable String director_name,@PathVariable String movie_name)
+    public String addMovieDirectorPair(@PathVariable String director_name,@PathVariable String movie_name)
     {
-        Pair pair = new Pair(director_name,movie_name);
-        pairsList.add(pair);
-        return  new ResponseEntity<>(pair, HttpStatus.CREATED);
+
+          if(direct_movies_map.containsKey(director_name))
+          {
+              direct_movies_map.get(director_name).add(movie_name);
+          }
+          else {
+              List<String> movie_list = new ArrayList<>();
+              movie_list.add(movie_name);
+              direct_movies_map.put(director_name,movie_list);
+          }
+        return  "success";
     }
     //http://localhost:8030/movies/add-movie-director-pair/{director_name}/{movie_name}
 
@@ -79,7 +84,8 @@ public class MovieController {
 
        if(Director_map.containsKey(name))
        {
-           return Director_map.get(name);
+           Director director = Director_map.get(name);
+           return director;
        }
        return null;
 
@@ -90,16 +96,11 @@ public class MovieController {
     @GetMapping("/get-movies-by-director-name/{director}")
     public List<String> getMoviesByDirectorName(@PathVariable String name)
     {
-        List<String> m = new ArrayList<>();
-
-        for(Pair pair :pairsList)
-        {
-           if(pair.getDirector_name() == name)
-           {
-               m.add(pair.getMovie_name());
-           }
-        }
-        return m;
+       if(direct_movies_map.containsKey(name))
+       {
+           return direct_movies_map.get(name);
+       }
+       return null;
     }
     //http.//localhost:8030/movies/get-movies-by-director-name/{director}
 
@@ -109,9 +110,9 @@ public class MovieController {
     {
         List<String> m = new ArrayList<>();
 
-        for(Movie movie : moviesList)
+        for(String name : Movie_map.keySet())
         {
-            m.add(movie.getName());
+            m.add(Movie_map.get(name).getName());
         }
         return m;
     }
@@ -119,30 +120,32 @@ public class MovieController {
 
     //Delete a director and its movies from the records
     @DeleteMapping("/delete-director-by-name/{name}")
-    public ResponseEntity  deleteAllDirectors(@PathVariable String name)
+    public String deleteDirectorByName(@PathVariable String name)
     {
-        for(Pair pair : pairsList)
+        List<String> list = direct_movies_map.get(name);
+
+        direct_movies_map.remove(name);
+        Director_map.remove(name);
+        for(String key : list)
         {
-            if(pair.getDirector_name().equals(name))
+            if(Movie_map.containsKey(key))
             {
-               String movie_name = pair.getMovie_name();
-               Movie movie = Movie_map.get(movie_name);
-               moviesList.remove(movie);
+
+                Movie_map.remove(key);
             }
         }
-        Director director = Director_map.get(name);
-        DirectorList.remove(director);
-        return  new ResponseEntity<>(HttpStatus.CREATED);
+
+        return "success";
     }
     //http://localhost:8030/delete-director-by-name/{name}
 
     //Delete all directors and all movies by them from the records
     @DeleteMapping("/delete-director-by-name")
-    public ResponseEntity deleteAllDirectors()
+    public String deleteAllDirectors()
     {
-        moviesList.clear();
-        DirectorList.clear();
-        return  new ResponseEntity<>(HttpStatus.CREATED);
+        Movie_map.clear();
+        Director_map.clear();
+        return "success";
     }
     //http://localhost:8030/movies/delete-director-by-name
 
