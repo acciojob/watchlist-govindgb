@@ -74,7 +74,7 @@ public class MovieController {
             return  new ResponseEntity<>(Movie_map.get(name), HttpStatus.CREATED);
 
         }
-        return null;
+        return  new ResponseEntity<>(Movie_map.get(name), HttpStatus.CREATED);
     }
     //http://localhost:8030/movies/get-movie-by-name/{name}
 
@@ -88,7 +88,7 @@ public class MovieController {
            Director director = Director_map.get(name);
            return  new ResponseEntity<>(director, HttpStatus.CREATED);
        }
-       return null;
+        return  new ResponseEntity<>( Director_map.get(name), HttpStatus.CREATED);
 
     }
     //http://localhost:8030/movies/get-director-by-name/{name}
@@ -102,7 +102,7 @@ public class MovieController {
            return  new ResponseEntity<>(direct_movies_map.get(name), HttpStatus.CREATED);
 
        }
-       return null;
+        return  new ResponseEntity<>(direct_movies_map.get(name), HttpStatus.CREATED);
     }
     //http.//localhost:8030/movies/get-movies-by-director-name/{director}
 
