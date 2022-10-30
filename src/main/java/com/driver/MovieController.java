@@ -15,7 +15,7 @@ public class MovieController {
 
 
 
-    //list of director and movie nam
+
 
 
 
@@ -66,12 +66,13 @@ public class MovieController {
 
     //return movie object by movie name
     @GetMapping("/get-movie-by-name/{name}")
-    public Movie getMovieByName(@PathVariable String name)
+    public  ResponseEntity<Movie>  getMovieByName(@PathVariable String name)
     {
 
         if(Movie_map.containsKey(name))
         {
-            return Movie_map.get(name);
+            return  new ResponseEntity<>(Movie_map.get(name), HttpStatus.CREATED);
+
         }
         return null;
     }
@@ -79,13 +80,13 @@ public class MovieController {
 
     //Get Director by director name
     @GetMapping("/get-director-by-name/{name}")
-    public Director getDirectorByName(@PathVariable String name)
+    public ResponseEntity<Director> getDirectorByName(@PathVariable String name)
     {
 
        if(Director_map.containsKey(name))
        {
            Director director = Director_map.get(name);
-           return director;
+           return  new ResponseEntity<>(director, HttpStatus.CREATED);
        }
        return null;
 
@@ -94,11 +95,12 @@ public class MovieController {
 
     //Get List of movies name for a given director name
     @GetMapping("/get-movies-by-director-name/{director}")
-    public List<String> getMoviesByDirectorName(@PathVariable String name)
+    public ResponseEntity<List<String>> getMoviesByDirectorName(@PathVariable String name)
     {
        if(direct_movies_map.containsKey(name))
        {
-           return direct_movies_map.get(name);
+           return  new ResponseEntity<>(direct_movies_map.get(name), HttpStatus.CREATED);
+
        }
        return null;
     }
@@ -106,7 +108,7 @@ public class MovieController {
 
     //Get List of all movies added
     @GetMapping("/get-all-movies")
-    public List<String> findAllMovies()
+    public ResponseEntity<List<String>> findAllMovies()
     {
         List<String> m = new ArrayList<>();
 
@@ -114,7 +116,7 @@ public class MovieController {
         {
             m.add(Movie_map.get(name).getName());
         }
-        return m;
+        return  new ResponseEntity<>(m, HttpStatus.CREATED);
     }
     //http://localhost:8030/movies/get-all-movies
 
