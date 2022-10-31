@@ -22,15 +22,15 @@ public class MovieController {
     //this hashmap map the movie name and Movie object
     HashMap<String,Movie> Movie_map = new HashMap<>();
     //this @PathVariable int x map the director name and Director object
-    HashMap<String,String> direct_movies_map = new HashMap<>();
+
     HashMap<String,Director> Director_map = new HashMap<>();
 
-    HashMap<String,List<String>> movieList = new HashMap<>();
 
+    HashMap<String,List<String>> direct_movies_map = new HashMap<>();
 
     @PostMapping("/add-movie")
     public String addMovie(@RequestBody Movie movie){
-//        moviesList.add(movie);
+
         Movie_map.put(movie.getName(),movie);
         return "success";
     }
@@ -51,18 +51,18 @@ public class MovieController {
     public String addMovieDirectorPair(@PathVariable String director_name,@PathVariable String movie_name)
     {
 
-          if(movieList.containsKey(director_name))
-          {
-              movieList.get(director_name).add(movie_name);
-          }
-          else {
-              List<String> movie_list = new ArrayList<>();
-              movie_list.add(movie_name);
-              movieList.put(director_name,movie_list);
-          }
+         if(Movie_map.containsKey(movie_name) && Director_map.containsKey(director_name))
+         {
+             List<String> m = new ArrayList<>();
+             if(direct_movies_map.containsKey(director_name))
+             {
+                 m = direct_movies_map.get(director_name);
+             }
+             m.add(movie_name);
+             direct_movies_map.put(director_name,m);
+         }
+         return "success";
 
-        direct_movies_map.put(director_name,movie_name);
-        return  "success";
     }
     //http://localhost:8030/movies/add-movie-director-pair/{director_name}/{movie_name}
 
@@ -99,14 +99,14 @@ public class MovieController {
 
     //Get List of movies name for a given director name
     @GetMapping("/get-movies-by-director-name/{director}")
-    public ResponseEntity<List<String>> getMoviesByDirectorName(@PathVariable String name)
+    public List<String> getMoviesByDirectorName(@PathVariable String director)
     {
-       if(movieList.containsKey(name))
+       List<String> m = new ArrayList<>();
+       if(direct_movies_map.containsKey(director))
        {
-           return new ResponseEntity<>(movieList.get(name), HttpStatus.CREATED);
-
+           m = direct_movies_map.get(director);
        }
-        return  new ResponseEntity<>(movieList.get(name), HttpStatus.CREATED);
+       return m;
     }
     //http.//localhost:8030/movies/get-movies-by-director-name/{director}
 
@@ -128,32 +128,23 @@ public class MovieController {
     @DeleteMapping("/delete-director-by-name/{name}")
     public String deleteDirectorByName(@PathVariable String name)
     {
-
-
-//        direct_movies_map.remove(name);
-//        Director_map.remove(name);
-//        for(String key : list)
-//        {
-//            if(Movie_map.containsKey(key))
-//            {
-//
-//                Movie_map.remove(key);
-//            }
-//        }
+        List<String > m = new ArrayList<>();
         if(direct_movies_map.containsKey(name))
         {
+            m = direct_movies_map.get(name);
+            for(String movie : m)
+            {
+                if(Movie_map.containsKey(movie))
+                {
+                    Movie_map.remove(movie);
+                }
+            }
             direct_movies_map.remove(name);
         }
         if(Director_map.containsKey(name))
         {
             Director_map.remove(name);
         }
-        String movie_name = direct_movies_map.get(name);
-        if(Movie_map.containsKey(movie_name))
-        {
-            Movie_map.remove(movie_name);
-        }
-
         return "success";
     }
     //http://localhost:8030/delete-director-by-name/{name}
@@ -162,9 +153,23 @@ public class MovieController {
     @DeleteMapping("/delete-director-by-name")
     public String deleteAllDirectors()
     {
-        Movie_map.clear();
-        Director_map.clear();
-        return "success";
+       List<String> m = new ArrayList<>();
+
+       for(String key : direct_movies_map.keySet())
+       {
+           for(String movie : direct_movies_map.get(key))
+           {
+               m.add(movie);
+           }
+       }
+       for(String movie : m)
+       {
+           if(Movie_map.containsKey(movie))
+           {
+               Movie_map.remove(movie);
+           }
+       }
+       return "success";
     }
     //http://localhost:8030/movies/delete-director-by-name
 
