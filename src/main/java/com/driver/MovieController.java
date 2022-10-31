@@ -29,26 +29,26 @@ public class MovieController {
     HashMap<String,List<String>> direct_movies_map = new HashMap<>();
 
     @PostMapping("/add-movie")
-    public String addMovie(@RequestBody Movie movie){
+    public ResponseEntity<String> addMovie(@RequestBody Movie movie){
 
         Movie_map.put(movie.getName(),movie);
-        return "success";
+        return new ResponseEntity<>("successfully", HttpStatus.CREATED);
     }
     //http://localhost:8030/movies/add-movie
 
     @PostMapping("/add-director")
-    public String addDirector(@RequestBody Director director)
+    public ResponseEntity<String> addDirector(@RequestBody Director director)
     {
 
         Director_map.put(director.getName(),director);
-        return "success";
+        return new ResponseEntity<>("successfully", HttpStatus.CREATED);
     }
   //http://localhost:8030/movies/add-director
 
 
     //Pair an existing movie and director
     @PutMapping("/add-movie-director-pair/{director_name}/{movie_name}")
-    public String addMovieDirectorPair(@PathVariable String director_name,@PathVariable String movie_name)
+    public ResponseEntity<String> addMovieDirectorPair(@PathVariable String director_name,@PathVariable String movie_name)
     {
 
          if(Movie_map.containsKey(movie_name) && Director_map.containsKey(director_name))
@@ -61,7 +61,7 @@ public class MovieController {
              m.add(movie_name);
              direct_movies_map.put(director_name,m);
          }
-         return "success";
+        return new ResponseEntity<>("successfully", HttpStatus.CREATED);
 
     }
     //http://localhost:8030/movies/add-movie-director-pair/{director_name}/{movie_name}
@@ -126,7 +126,7 @@ public class MovieController {
 
     //Delete a director and its movies from the records
     @DeleteMapping("/delete-director-by-name/{name}")
-    public String deleteDirectorByName(@PathVariable String name)
+    public ResponseEntity<String> deleteDirectorByName(@PathVariable String name)
     {
         List<String > m = new ArrayList<>();
         if(direct_movies_map.containsKey(name))
@@ -145,13 +145,13 @@ public class MovieController {
         {
             Director_map.remove(name);
         }
-        return "success";
+        return new ResponseEntity<>("successfully", HttpStatus.CREATED);
     }
     //http://localhost:8030/delete-director-by-name/{name}
 
     //Delete all directors and all movies by them from the records
     @DeleteMapping("/delete-director-by-name")
-    public String deleteAllDirectors()
+    public ResponseEntity<String> deleteAllDirectors()
     {
        List<String> m = new ArrayList<>();
 
@@ -169,7 +169,9 @@ public class MovieController {
                Movie_map.remove(movie);
            }
        }
-       return "success";
+       Director_map.clear();
+       direct_movies_map.clear();
+        return new ResponseEntity<>("successfully", HttpStatus.CREATED);
     }
     //http://localhost:8030/movies/delete-director-by-name
 
