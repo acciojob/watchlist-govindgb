@@ -171,7 +171,7 @@ public class MovieController {
        }
        Director_map.clear();
        direct_movies_map.clear();
-        return new ResponseEntity<>("successfully", HttpStatus.CREATED);
+       return new ResponseEntity<>("successfully", HttpStatus.CREATED);
     }
     //http://localhost:8030/movies/delete-director-by-name
 
@@ -180,12 +180,7 @@ public class MovieController {
 
 
 
-//    @GetMapping("/check")
-//    public String check()
-//    {
-//        return "running";
-//    }
-    //http://localhost/movies/check
+
 
 
 }
