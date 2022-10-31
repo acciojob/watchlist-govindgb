@@ -48,7 +48,7 @@ public class MovieController {
 
     //Pair an existing movie and director
     @PutMapping("/add-movie-director-pair/{movie_name}/{director_name}")
-    public ResponseEntity<String> addMovieDirectorPair(@PathVariable String director_name,@PathVariable String movie_name)
+    public ResponseEntity<String> addMovieDirectorPair(@PathVariable String movie_name,@PathVariable String director_name)
     {
 
          if(Movie_map.containsKey(movie_name) && Director_map.containsKey(director_name))
