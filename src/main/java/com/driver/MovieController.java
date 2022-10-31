@@ -150,7 +150,7 @@ public class MovieController {
     //http://localhost:8030/delete-director-by-name/{name}
 
     //Delete all directors and all movies by them from the records
-    @DeleteMapping("/delete-director-by-name")
+    @DeleteMapping("/delete-all-directors")
     public ResponseEntity<String> deleteAllDirectors()
     {
        List<String> m = new ArrayList<>();
@@ -169,6 +169,7 @@ public class MovieController {
                Movie_map.remove(movie);
            }
        }
+
        Director_map.clear();
        direct_movies_map.clear();
        return new ResponseEntity<>("successfully", HttpStatus.CREATED);
