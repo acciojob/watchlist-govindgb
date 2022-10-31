@@ -99,14 +99,14 @@ public class MovieController {
 
     //Get List of movies name for a given director name
     @GetMapping("/get-movies-by-director-name/{director}")
-    public List<String> getMoviesByDirectorName(@PathVariable String director)
+    public ResponseEntity<List<String>> getMoviesByDirectorName(@PathVariable String director)
     {
        List<String> m = new ArrayList<>();
        if(direct_movies_map.containsKey(director))
        {
            m = direct_movies_map.get(director);
        }
-       return m;
+        return  new ResponseEntity<>(m, HttpStatus.CREATED);
     }
     //http.//localhost:8030/movies/get-movies-by-director-name/{director}
 
